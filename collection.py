@@ -6,6 +6,9 @@ import json
 load_dotenv()
 
 SEBRAE_HOST = os.getenv("SEBRAE_HOST")
+DATALAKE_HOST = os.getenv("DATALAKE_HOST")
+DATALAKE_DB = os.getenv("DATALAKE_DB")
+DATALAKE_COLLECTION = os.getenv("DATALAKE_COLLECTION")
 
 FONTE = 'files/fonte.json'
 INSERT = 'files/insert.json'
@@ -25,6 +28,8 @@ def get_collections(all_collections: list, research_names: list):
     for name in all_collections:
         if any(part in name for part in research_names):
             collections.append(name)
+
+    collections = verify_insert(collections)
     return collections
 
 def get_link():
@@ -59,7 +64,19 @@ def verify_metadata(datas):
                 datas[key_inserted] = value
 
     return datas
-        
+
+def verify_insert(collection_names):
+    client = MongoClient(DATALAKE_HOST)
+    collection = client[DATALAKE_DB][DATALAKE_COLLECTION]
+    for doc in collection.find({}, {'collection': 1, '_id': 0}):
+        collection_name = doc['collection']
+        if any(name == collection_name for name in collection_names):
+            print(f"{collection_name} já existe!")
+            collection_names.remove(collection_name)
+
+    client.close()
+    return collection_names
+
 def main():
     research_db, research_names = init()
     client = MongoClient(SEBRAE_HOST)

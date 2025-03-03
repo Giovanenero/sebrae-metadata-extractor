@@ -114,6 +114,18 @@ def remove_link():
         with open(LINKS, "w") as f:
             f.writelines(lines[1:])
 
+def verify_insert(name):
+    client = MongoClient(DATALAKE_HOST)
+    collection = client[DATALAKE_DB][DATALAKE_COLLECTION]
+    for doc in collection.find({}, {'collection': 1, '_id': 0}):
+        collection_name = doc['collection']
+        if collection_name == name:
+            print(f"{collection_name} já existe!")
+            client.close()
+            return True
+    client.close()
+    return False
+
 def main():
     data = get_datas()
     link = data['link']
@@ -126,6 +138,8 @@ def main():
     db = client[db_name]
     print('===================== Adicionando =====================\n')
     for name in collections_name:
+        if verify_insert(name):
+            continue
         metadata = get_metadata(data, db[name], name, db_name)
         insert(metadata)
         log = f"Adicionando: {db_name} - {name}"
