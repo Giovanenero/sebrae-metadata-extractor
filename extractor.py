@@ -19,9 +19,9 @@ DATALAKE_COLLECTION = os.getenv("DATALAKE_COLLECTION")
 
 SEBRAE_HOST = os.getenv("SEBRAE_HOST")
 
-FONTE = 'fonte.json'
-LINKS = 'links.txt'
-INSERT = 'insert.json'
+FONTE = 'files/fonte.json'
+LINKS = 'files/links.txt'
+INSERT = 'files/insert.json'
 
 def check_empty_fields(datas):
     empty_names = []

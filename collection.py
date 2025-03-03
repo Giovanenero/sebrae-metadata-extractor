@@ -7,10 +7,10 @@ load_dotenv()
 
 SEBRAE_HOST = os.getenv("SEBRAE_HOST")
 
-FONTE = 'fonte.json'
-INSERT = 'insert.json'
-INSERTED = 'inserted.json'
-LINKS = 'links.txt'
+FONTE = 'files/fonte.json'
+INSERT = 'files/insert.json'
+INSERTED = 'files/inserted.json'
+LINKS = 'files/links.txt'
 
 def init():
     """Carrega o nome do banco de dados e a coleção de dados"""
