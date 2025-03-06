@@ -1,3 +1,76 @@
 {
-    
+    "data": {
+        "MUNICIPIO": {
+            "name": "nome_municipio",
+            "description": "Nome do município ao qual os dados populacionais se referem. Representa a localidade geográfica analisada na estimativa demográfica."
+        },
+        "MASCULINO": {
+            "name": "quantidade_masculino",
+            "description": "Número estimado de indivíduos do sexo masculino residentes no município no ano de referência."
+        },
+        "FEMININO": {
+            "name": "quantidade_feminino",
+            "description": "Número estimado de indivíduos do sexo feminino residentes no município no ano de referência."
+        },
+        "0_A_4_ANOS": {
+            "name": "populacao_0_4",
+            "description": "Quantidade estimada de crianças com idade entre 0 e 4 anos no município, refletindo a faixa etária da primeira infância."
+        },
+        "5_A_9_ANOS": {
+            "name": "populacao_5_9",
+            "description": "Quantidade estimada de crianças com idade entre 5 e 9 anos no município, abrangendo parte do ensino infantil e fundamental."
+        },
+        "10_A_14_ANOS": {
+            "name": "populacao_10_14",
+            "description": "Quantidade estimada de indivíduos com idade entre 10 e 14 anos no município, incluindo adolescentes em fase escolar."
+        },
+        "15_A_19_ANOS": {
+            "name": "populacao_15_19",
+            "description": "Quantidade estimada de jovens com idade entre 15 e 19 anos no município, faixa etária que compreende parte do ensino médio e início da vida adulta."
+        },
+        "20_A_29_ANOS": {
+            "name": "populacao_20_29",
+            "description": "Quantidade estimada de indivíduos com idade entre 20 e 29 anos no município, representando a população jovem adulta."
+        },
+        "30_A_39_ANOS": {
+            "name": "populacao_30_39",
+            "description": "Quantidade estimada de indivíduos com idade entre 30 e 39 anos no município, refletindo uma fase produtiva e economicamente ativa da população."
+        },
+        "40_A_49_ANOS": {
+            "name": "populacao_40_49",
+            "description": "Quantidade estimada de indivíduos com idade entre 40 e 49 anos no município, geralmente associada a estabilidade profissional e familiar."
+        },
+        "50_A_59_ANOS": {
+            "name": "populacao_50_59",
+            "description": "Quantidade estimada de indivíduos com idade entre 50 e 59 anos no município, abrangendo a transição para a terceira idade."
+        },
+        "60_A_69_ANOS": {
+            "name": "populacao_60_69",
+            "description": "Quantidade estimada de indivíduos com idade entre 60 e 69 anos no município, representando a população idosa em fase inicial de aposentadoria."
+        },
+        "70_A_79_ANOS": {
+            "name": "populacao_70_79",
+            "description": "Quantidade estimada de indivíduos com idade entre 70 e 79 anos no município, englobando a população idosa mais experiente."
+        },
+        "80_ANOS_E_MAIS": {
+            "name": "populacao_80",
+            "description": "Quantidade estimada de indivíduos com 80 anos ou mais no município, representando a população de longevos e a expectativa de vida elevada."
+        },
+        "UF": {
+            "name": "sigla_estado",
+            "description": "Sigla da unidade federativa (estado) onde o município está localizado, permitindo análises regionais dos dados populacionais."
+        },
+        "POPULACAO_TOTAL": {
+            "name": "quantidade_populacao",
+            "description": "Soma da população masculina e feminina do município, representando o total de habitantes estimados para o ano de referência."
+        },
+        "ANO": {
+            "name": "ano_referencia",
+            "description": "Ano ao qual os dados populacionais se referem, sendo fundamental para análises temporais e projeções demográficas."
+        }
+    },
+    "collections": [
+        "ESTIMATIVAS_POPULACIONAIS"
+    ],
+    "link": ""
 }

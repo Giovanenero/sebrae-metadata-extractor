@@ -1,5 +1,6 @@
 {
-    "DB": "CAPES",
+    "DB": "DATASUS",
     "COLLECTIONS": [
+        "ESTIMATIVAS_POPULACIONAIS"
     ]
 }

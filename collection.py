@@ -22,14 +22,14 @@ def init():
     
     return data["DB"] , data["COLLECTIONS"]
 
-def get_collections(all_collections: list, research_names: list):
+def get_collections(c_datalake, all_collections: list, research_names: list):
     """Retorna todas as coleções da pesquisa"""
     collections = []
     for name in all_collections:
         if any(part in name for part in research_names):
             collections.append(name)
 
-    collections = verify_insert(collections)
+    collections = verify_insert(c_datalake, collections)
     return collections
 
 def get_link():
@@ -65,26 +65,30 @@ def verify_metadata(datas):
 
     return datas
 
-def verify_insert(collection_names):
-    client = MongoClient(DATALAKE_HOST)
-    collection = client[DATALAKE_DB][DATALAKE_COLLECTION]
-    for doc in collection.find({}, {'collection': 1, '_id': 0}):
+def verify_insert(c_datalake, collection_names):
+    for doc in c_datalake.find({}, {'collection': 1, '_id': 0}):
         collection_name = doc['collection']
         if any(name == collection_name for name in collection_names):
             print(f"{collection_name} já existe!")
             collection_names.remove(collection_name)
 
-    client.close()
     return collection_names
 
 def main():
     research_db, research_names = init()
-    client = MongoClient(SEBRAE_HOST)
-    db = client[research_db]
-    collections = get_collections(db.list_collection_names(), research_names)
+    client_sebrae = MongoClient(SEBRAE_HOST)
+    db = client_sebrae[research_db]
+
+    client_datalake = MongoClient(DATALAKE_HOST)
+    c_datalake = client_datalake[DATALAKE_DB][DATALAKE_COLLECTION]
+
+    collections = get_collections(c_datalake, db.list_collection_names(), research_names)
     metadatas = get_metadatas(db, collections)
     metadatas['data'] = verify_metadata(metadatas['data'])
     
+    client_sebrae.close()
+    client_datalake.close()
+
     with open(INSERT, "w", encoding="utf-8") as file:
         json.dump(metadatas, file, indent=4, ensure_ascii=False)
 

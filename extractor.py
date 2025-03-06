@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import json
 import logging
+import unicodedata
+import re
 
 logging.basicConfig(
     filename="extractor.log",
@@ -67,18 +69,20 @@ def get_collections_name():
 
 def get_type(collection, column):
     """Retorna o tipo do primeiro valor não nulo encontrado em uma coluna da coleção MongoDB"""
-    docs = collection.find({}, {column: 1, '_id': 0})  
+    doc = collection.find_one({column: {"$ne": None}}, {column: 1, '_id': 0})  # Busca direto um valor não nulo
 
-    for doc in docs:
-        value = doc.get(column)
-        if value is not None: return type(value).__name__
-    return type(None).__name__
+    return type(doc[column]).__name__ if doc else type(None).__name__
 
 def get_datas():
     with open(INSERT, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     return data
+
+def get_text(text):
+    text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
+    text = re.sub(r'[^a-z0-9 _]', '', text.lower())
+    return text
 
 def get_metadata(data, collection, c_name, db_name):
     metadatas = []
@@ -94,17 +98,10 @@ def get_metadata(data, collection, c_name, db_name):
             'collection': c_name,
             'column': key,
             'type': type_name,
-            'key': name if name != '' else default_key,
+            'key': get_text(name) if name != '' else default_key,
             'description': description if name != '' else default_description,
         })
     return metadatas
-
-def insert(metadata):
-    client = MongoClient(DATALAKE_HOST)
-    #client = MongoClient('mongodb://localhost:27017')
-    collection = client[DATALAKE_DB][DATALAKE_COLLECTION]
-    collection.insert_many(metadata)
-    client.close()
 
 def remove_link():
     with open(LINKS, "r") as f:
@@ -114,17 +111,12 @@ def remove_link():
         with open(LINKS, "w") as f:
             f.writelines(lines[1:])
 
-def verify_insert(name):
-    client = MongoClient(DATALAKE_HOST)
-    collection = client[DATALAKE_DB][DATALAKE_COLLECTION]
-    for doc in collection.find({}, {'collection': 1, '_id': 0}):
-        collection_name = doc['collection']
-        if collection_name == name:
-            print(f"{collection_name} já existe!")
-            client.close()
-            return True
-    client.close()
-    return False
+def verify_insert(c_datalake, name):
+    exists = c_datalake.count_documents({"collection": name}, limit=1) > 0
+    if exists:
+        print(f"{name} já existe!")
+
+    return exists
 
 def main():
     data = get_datas()
@@ -134,21 +126,26 @@ def main():
     db_name = get_db_name()
     collections_name = get_collections_name()
 
-    client = MongoClient(SEBRAE_HOST)
-    db = client[db_name]
+    client_sebrae = MongoClient(SEBRAE_HOST)
+    db_sebrae = client_sebrae[db_name]
+
+    client_datalake = MongoClient(DATALAKE_HOST)
+    c_datalake = client_datalake[DATALAKE_DB][DATALAKE_COLLECTION]
+
     print('===================== Adicionando =====================\n')
     for name in collections_name:
-        if verify_insert(name):
+        if verify_insert(c_datalake, name):
             continue
-        metadata = get_metadata(data, db[name], name, db_name)
-        insert(metadata)
+        metadata = get_metadata(data, db_sebrae[name], name, db_name)
+        c_datalake.insert_many(metadata)
         log = f"Adicionando: {db_name} - {name}"
         if link != "":
             log += f" - link: {link}"
         logging.info(log)
         print(name)
 
-    client.close()
+    client_sebrae.close()
+    client_datalake.close()
     remove_link()
 
 if __name__ == '__main__':

@@ -1,2 +1,4 @@
 python-dotenv==1.0.1
 pymongo==4.11.1
+tabula-py==2.6.0
+setuptools==75.8.0
